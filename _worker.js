@@ -45,7 +45,7 @@ let edgetunnel = 'ed';
 let RproxyIP = 'false';
 let proxyIPs = [
 	'proxyip.multacom.fxxk.dedyn.io',
-	'proxyip.vultr.fxxk.dedyn.io',
+        'proxyip.gb.186077.xyz',
 ];
 let CMproxyIPs = [
 	//'proxyip.aliyun.fxxk.dedyn.io:HK',
