@@ -8,6 +8,7 @@ let addresses = [
 	'icook.tw:2053#官方优选域名',
 	'cloudflare.cfgo.cc#优选官方线路',
 ];
+// 设置优选地址ip端口 变量ADDAPIPORT
 
 // 设置优选地址api接口
 let addressesapi = [
@@ -540,6 +541,7 @@ export default {
 
 			const responseBody = uniqueAddresses.map(address => {
 				let port = "443";
+				if (env.ADDAPIPORT) port = await ADD(env.ADDAPIPORT);
 				let addressid = address;
 			
 				const match = addressid.match(regex);
