@@ -3,16 +3,11 @@
 
 let mytoken= ['auto'];//快速订阅访问入口, 留空则不启动快速订阅
 
-
 // 设置优选地址，不带端口号默认443，TLS订阅生成
 let addresses = [
 	'icook.tw:2053#官方优选域名',
 	'cloudflare.cfgo.cc#优选官方线路',
 ];
-
-// ADDAPI空端口设置默认端口号
-// ADDAPIPORT变量提供， 默认443端口， getAddressesapi_2函数
-let addressesapiprot = "443";
 
 // 设置优选地址api接口
 let addressesapi = [
@@ -45,7 +40,7 @@ let edgetunnel = 'ed';
 let RproxyIP = 'false';
 let proxyIPs = [//无法匹配到节点名就随机分配以下ProxyIP域名
 	'proxyip.multacom.fxxk.dedyn.io',
-        'proxyip.gb.186077.xyz',
+	'proxyip.vultr.fxxk.dedyn.io',
 ];
 let CMproxyIPs = [
 	//'proxyip.aliyun.fxxk.dedyn.io:HK',//匹配节点名, 有HK就分配该ProxyIP域名
@@ -95,7 +90,6 @@ async function getAddressesapi(api) {
 	}
 
 	let newapi = "";
-	
 
 	// 创建一个AbortController对象，用于控制fetch请求的取消
 	const controller = new AbortController();
@@ -136,72 +130,6 @@ async function getAddressesapi(api) {
 
 	// 返回处理后的结果
 	return newAddressesapi;
-}
-
-// 定义getAddressesapi_2函数，获取并处理API地址
-// 不带端口号默认443,或者ADDAPIPORT变量指定端口
-async function getAddressesapi_2(api) {
-    if (!api || api.length === 0) {
-        return [];
-    }
-
-    let newapi = "";
-    
-    // 创建一个AbortController对象，用于控制fetch请求的取消
-    const controller = new AbortController();
-
-    const timeout = setTimeout(() => {
-        controller.abort(); // 取消所有请求
-    }, 2000); // 2秒后触发
-
-    try {
-        // 使用Promise.allSettled等待所有API请求完成，无论成功或失败
-        const responses = await Promise.allSettled(api.map(apiUrl => fetch(apiUrl, {
-            method: 'get',
-            headers: {
-                'Accept': 'text/html,application/xhtml+xml,application/xml;',
-                'User-Agent': 'cmliu/WorkerVless2sub'
-            },
-            signal: controller.signal // 将AbortController的信号量添加到fetch请求中，以便于需要时可以取消请求
-        }).then(response => response.ok ? response.text() : Promise.reject())));
-
-        // 遍历所有响应
-        for (const response of responses) {
-            // 检查响应状态是否为'fulfilled'，即请求成功完成
-            if (response.status === 'fulfilled') {
-                // 获取响应的内容
-                const content = await response.value;
-                newapi += content + '\n';
-            }
-        }
-    } catch (error) {
-        console.error(error);
-    } finally {
-        clearTimeout(timeout);
-    }
-
-    // 处理newapi字符串，为不带端口号的IP地址添加默认端口443
-    function addDefaultPort(addresses) {
-        return addresses.split('\n').map(address => {
-            const parts = address.split('#');
-            const ip = parts[0];
-            const label = parts[1] ? '#' + parts[1] : '';
-            if (!ip.includes(':')) {
-            	//addressesapiprot
-                return ip + ':' + addressesapiprot + label;
-            }
-            return address;
-        }).join('\n');
-    }
-    
-    
-    newapi = addDefaultPort(newapi);
-
-    // 使用ADD函数处理newapi字符串
-    const newAddressesapi = await ADD(newapi);
-
-    // 返回处理后的结果
-    return newAddressesapi;
 }
 
 async function getAddressescsv(tls) {
@@ -338,9 +266,8 @@ export default {
 		const links = await ADD(link);
 		link = links.join('\n');
 		
-		if (env.ADD) addresses = await ADD(env.ADD);		
+		if (env.ADD) addresses = await ADD(env.ADD);
 		if (env.ADDAPI) addressesapi = await ADD(env.ADDAPI);
-		if (env.ADDAPIPORT) addressesapiprot = await ADD(env.ADDAPIPORT);
 		if (env.ADDNOTLS) addressesnotls = await ADD(env.ADDNOTLS);
 		if (env.ADDNOTLSAPI) addressesnotlsapi = await ADD(env.ADDNOTLSAPI);
 		if (env.ADDCSV) addressescsv = await ADD(env.ADDCSV);
@@ -526,9 +453,7 @@ export default {
 				proxyhosts = [...new Set(proxyhosts)];
 			}
 			
-			//const newAddressesapi = await getAddressesapi(addressesapi);
-			// 使用getAddressesapi_2函数获取并处理地址 空端口默认443端口
-            const newAddressesapi = await getAddressesapi_2(addressesapi);
+			const newAddressesapi = await getAddressesapi(addressesapi);
 			const newAddressescsv = await getAddressescsv('TRUE');
 			addresses = addresses.concat(newAddressesapi);
 			addresses = addresses.concat(newAddressescsv);
@@ -803,4 +728,4 @@ function getRandomProxyByMatch(CC, socks5Data) {
 	// 从匹配的代理中随机选择一个并返回
 	const randomProxy = filteredProxies[Math.floor(Math.random() * filteredProxies.length)];
 	return randomProxy;
-}
+	}
