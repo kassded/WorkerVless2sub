@@ -39,11 +39,17 @@ let link = '';
 let edgetunnel = 'ed';
 let RproxyIP = 'false';
 let proxyIPs = [//无法匹配到节点名就随机分配以下ProxyIP域名
-	'proxyip.multacom.fxxk.dedyn.io',
-	'proxyip.vultr.fxxk.dedyn.io',
+	//'proxyip.multacom.fxxk.dedyn.io',
+	//'proxyip.vultr.fxxk.dedyn.io',
+	'proxyip.us.fxxk.dedyn.io',
 ];
 let CMproxyIPs = [
-	//'proxyip.aliyun.fxxk.dedyn.io:HK',//匹配节点名, 有HK就分配该ProxyIP域名
+	'proxyip.aliyun.fxxk.dedyn.io:HK',//匹配节点名, 有HK就分配该ProxyIP域名
+	'proxyip.sg.fxxk.dedyn.io:Singapore',
+        'proxyip.hk.fxxk.dedyn.io:Hong Kong',
+        'proxyip.vultr.fxxk.dedyn.io:Seoul',
+        'proxyip.jp.fxxk.dedyn.io.:Tokyo',
+	'proxyip.jp.fxxk.dedyn.io.:JP',
 ]
 let socks5DataURL = '';//'https://raw.githubusercontent.com/cmliu/WorkerVless2sub/main/socks5Data'
 let BotToken ='';
